@@ -68,9 +68,8 @@
         action: "save",
         experiment_id: "EVKIAk751SDE", //replace with ID
         filename: "stroop_task_data.csv",
-        data_string: () => {
-          jsPsych.data.get().csv();
-        }
+        data_string: () => jsPsych.data.get().csv()
+        
       };
 
       // Add save data to the timeline
