@@ -29,10 +29,7 @@
 
       //timeline is empty list. Before each trial, it is pushed to timeline. needed because too many trials to enter manually
       const timeline = [];
-
-      //vriables to store correct and incorrect answers
-      let correct = 0;
-      let incorrect = 0;
+    
 
       // Function to check if answer is correct
       function check(stim, data) {
@@ -43,9 +40,9 @@
           response = "NOT";
         }
         if (response == stim.answer) {
-          correct++;
+          data.correctness = "correct";
         } else {
-          incorrect++;
+          data.correctness = "incorrect";
         }
       }
 
