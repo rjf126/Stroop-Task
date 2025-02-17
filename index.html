@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stroop Task</title>
+    <script src="https://unpkg.com/jspsych@7.3.4"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-button-response"></script>
+    <script src="https://unpkg.com/@jspsych-contrib/plugin-pipe@0.4"></script>
+  </head>
+  <body>
+    <script>
+      const jsPsych = initJsPsych();
+
+      //all possible variations
+      const stimuli = [
+        {word: "Red", color: "red", answer: "MATCH"},
+        {word: "Red", color: "blue", answer: "NOT"},
+        {word: "Red", color: "green", answer: "NOT"},
+        {word: "Blue", color: "blue", answer: "MATCH"},
+        {word: "Blue", color: "red", answer: "NOT"},
+        {word: "Blue", color: "green", answer: "NOT"},
+        {word: "Green", color: "green", answer: "MATCH"},
+        {word: "Green", color: "red", answer: "NOT"},
+        {word: "Green", color: "blue", answer: "NOT"}
+      ];
+
+      //randomize stimuli. 2 means each repeat twice. found on jspsych randomization website
+      const randomized = jsPsych.randomization.repeat(stimuli, 2);
+
+      //timeline is empty list. Before each trial, it is pushed to timeline. needed because too many trials to enter manually
+      const timeline = [];
+
+      //vriables to store correct and incorrect answers
+      let correct = 0;
+      let incorrect = 0;
+
+      // Function to check if answer is correct
+      function check(stim, data) {
+        let response;
+        if (data.response == 0) {
+          response = "MATCH";
+        } else {
+          response = "NOT";
+        }
+        if (response == stim.answer) {
+          correct++;
+        } else {
+          incorrect++;
+        }
+      }
+
+      for (let stim of randomized) {
+        timeline.push({
+          type: jsPsychHtmlKeyboardResponse,
+          stimulus: "<p>Press any key when ready for next trial.</p>"
+        });
+
+        timeline.push({
+          type: jsPsychHtmlButtonResponse,
+          stimulus: `<p style="color:${stim.color}">${stim.word}</p>`,
+          choices: ["MATCH", "NOT"],
+          data: {word: stim.word, color: stim.color, correct_answer: stim.answer},
+          on_finish: function (data) {
+            check(stim, data);
+          }
+        });
+      }
+
+      const save_data_trial = {
+        type: jsPsychPipe,
+        action: "save",
+        experiment_id: "EVKIAk751SDE", //replace with ID
+        filename: "stroop_task_data.csv",
+        data_string: () => jsPsych.data.get().csv()
+      };
+
+      // Add save data to the timeline
+      timeline.push(save_data_trial);
+
+      jsPsych.run(timeline);
+
+    </script>
+  </body>
+</html
