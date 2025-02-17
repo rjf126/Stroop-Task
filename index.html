@@ -29,6 +29,22 @@
 
       //timeline is empty list. Before each trial, it is pushed to timeline. needed because too many trials to enter manually
       const timeline = [];
+    
+
+      //function to check if answer is correct
+      function check(stim, data) {
+        let response;
+        if (data.response == 0) {
+          response = "MATCH";
+        } else {
+          response = "NOT";
+        }
+        if (response == stim.answer) {
+          data.correctness = "correct";
+        } else {
+          data.correctness = "incorrect";
+        }
+      }
 
       for (let stim of randomized) {
         timeline.push({
@@ -41,6 +57,9 @@
           stimulus: `<p style="color:${stim.color}">${stim.word}</p>`,
           choices: ["MATCH", "NOT"],
           data: {word: stim.word, color: stim.color, correct_answer: stim.answer},
+          on_finish: function (data) {
+            check(stim, data);
+          }
         });
       }
 
@@ -50,11 +69,10 @@
         experiment_id: "EVKIAk751SDE", //replace with ID
         filename: "stroop_task_data.csv",
         data_string: () => jsPsych.data.get().csv()
+        
       };
 
-      // Add save data to the timeline
       timeline.push(save_data_trial);
-
       jsPsych.run(timeline);
 
     </script>
